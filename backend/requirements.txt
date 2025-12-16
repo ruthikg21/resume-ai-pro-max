@@ -1,0 +1,10 @@
+urllib3<2.0.0
+fastapi==0.95.2
+uvicorn==0.22.0
+python-multipart
+spacy==3.5.3
+scikit-learn==1.0.2
+pypdf==3.9.0
+python-docx==0.8.11
+numpy==1.21.6
+typing-extensions==4.7.1
