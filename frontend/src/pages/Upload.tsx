@@ -58,7 +58,8 @@ const Upload = () => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch("http://localhost:8000/analyze-resume", {
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      const response = await fetch(`${API_URL}/analyze-resume`, {
         method: "POST",
         body: formData,
       });
@@ -115,10 +116,10 @@ const Upload = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
             className={`relative rounded-2xl border-2 border-dashed transition-all duration-300 ${isDragging
-                ? "border-accent bg-accent/5 scale-[1.02]"
-                : file
-                  ? "border-accent/50 bg-accent/5"
-                  : "border-border hover:border-primary/30 hover:bg-secondary/50"
+              ? "border-accent bg-accent/5 scale-[1.02]"
+              : file
+                ? "border-accent/50 bg-accent/5"
+                : "border-border hover:border-primary/30 hover:bg-secondary/50"
               }`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
