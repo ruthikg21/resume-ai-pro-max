@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -11,10 +12,25 @@ from scoring_logic import calculate_resume_score, generate_suggestions
 
 app = FastAPI(title="AI Resume Analyzer API", version="1.0")
 
-# Configure CORS (Accept all for dev)
+# Configure CORS - supports both development and production
+# In production, set FRONTEND_URL environment variable to your Vercel domain
+allowed_origins = [
+    "http://localhost:8080",
+    "http://localhost:3000",
+    "http://127.0.0.1:8080",
+    "http://127.0.0.1:3000",
+]
+
+# Add production frontend URL if set
+frontend_url = os.getenv("FRONTEND_URL")
+if frontend_url:
+    allowed_origins.append(frontend_url)
+    # Also allow with/without trailing slash
+    allowed_origins.append(frontend_url.rstrip("/"))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins if os.getenv("PRODUCTION") else ["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -33,6 +49,11 @@ class AnalysisResponse(BaseModel):
 @app.get("/")
 def home():
     return {"message": "AI Resume Analyzer Backend is Running"}
+
+@app.get("/health")
+def health_check():
+    """Health check endpoint for Render deployment."""
+    return {"status": "healthy", "message": "API is running"}
 
 @app.post("/upload-resume")
 async def upload_resume(file: UploadFile = File(...)):
