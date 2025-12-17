@@ -59,7 +59,8 @@ const Upload = () => {
       formData.append("file", file);
 
       // Use environment variable, or fallback to Render backend URL
-      const API_URL = import.meta.env.VITE_API_URL || "https://resume-ai-backend-76li.onrender.com";
+      // Remove trailing slash to prevent double-slash in URL
+      const API_URL = (import.meta.env.VITE_API_URL || "https://resume-ai-backend-76li.onrender.com").replace(/\/+$/, '');
       console.log("Using API URL:", API_URL);
 
       const response = await fetch(`${API_URL}/analyze-resume`, {
