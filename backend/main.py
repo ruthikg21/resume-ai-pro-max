@@ -12,25 +12,11 @@ from scoring_logic import calculate_resume_score, generate_suggestions
 
 app = FastAPI(title="AI Resume Analyzer API", version="1.0")
 
-# Configure CORS - supports both development and production
-# In production, set FRONTEND_URL environment variable to your Vercel domain
-allowed_origins = [
-    "http://localhost:8080",
-    "http://localhost:3000",
-    "http://127.0.0.1:8080",
-    "http://127.0.0.1:3000",
-]
-
-# Add production frontend URL if set
-frontend_url = os.getenv("FRONTEND_URL")
-if frontend_url:
-    allowed_origins.append(frontend_url)
-    # Also allow with/without trailing slash
-    allowed_origins.append(frontend_url.rstrip("/"))
-
+# Configure CORS - Allow all origins for deployment
+# This ensures the frontend can connect from any domain
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins if os.getenv("PRODUCTION") else ["*"],
+    allow_origins=["*"],  # Allow all origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
