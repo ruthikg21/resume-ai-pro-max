@@ -58,17 +58,25 @@ const Upload = () => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      // Use environment variable, or fallback to Render backend URL
+      const API_URL = import.meta.env.VITE_API_URL || "https://resume-ai-backend-76li.onrender.com";
+      console.log("Using API URL:", API_URL);
+
       const response = await fetch(`${API_URL}/analyze-resume`, {
         method: "POST",
         body: formData,
       });
 
+      console.log("Response status:", response.status);
+
       if (!response.ok) {
-        throw new Error("Failed to analyze resume");
+        const errorText = await response.text();
+        console.error("Error response:", errorText);
+        throw new Error(`Failed to analyze resume: ${response.status}`);
       }
 
       const results = await response.json();
+      console.log("Analysis results:", results);
 
       toast({
         title: "Analysis Complete!",
@@ -82,7 +90,7 @@ const Upload = () => {
       console.error("Error analyzing resume:", error);
       toast({
         title: "Analysis Failed",
-        description: "There was an error analyzing your resume. Please try again.",
+        description: error instanceof Error ? error.message : "There was an error analyzing your resume. Please try again.",
         variant: "destructive",
       });
     } finally {
